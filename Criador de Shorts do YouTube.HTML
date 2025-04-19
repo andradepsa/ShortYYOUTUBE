@@ -1,0 +1,270 @@
+<!DOCTYPE html> 
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Criador de Shorts do YouTube</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    .upload-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      border: 2px dashed #FF0000;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+    .preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .preview-item {
+      width: 120px;
+      height: 213px;
+      object-fit: contain;
+      background-color: black;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    button {
+      padding: 12px 25px;
+      background-color: #FF0000;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #cc0000;
+    }
+    .video-result {
+      margin-top: 30px;
+    }
+    .video-card {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background-color: white;
+    }
+    .video-player {
+      width: 100%;
+      max-width: 360px;
+      height: 640px;
+      background-color: black;
+      border-radius: 10px;
+      margin: 0 auto;
+      display: block;
+    }
+    .download-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #4285F4;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: bold;
+    }
+    .download-btn:hover {
+      background-color: #3367d6;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center;">Criador de Shorts do YouTube</h1>
+
+  <div class="upload-section">
+    <h2>1. Selecione as Imagens</h2>
+    <input type="file" id="imageInput" accept="image/*" multiple>
+    <div class="preview-container" id="imagePreview"></div>
+  </div>
+
+  <div class="upload-section">
+    <h2>2. Selecione a Música</h2>
+    <input type="file" id="audioInput" accept="audio/*">
+    <div id="audioPreview"></div>
+  </div>
+
+  <div class="upload-section">
+    <h2>3. Criar Shorts</h2>
+    <button id="createBtn" disabled>Criar Shorts</button>
+    <button id="baixarTodosBtn" disabled>📥 Baixar Todos os Shorts</button>
+    <progress id="progress" value="0" max="100" style="width:100%; display:none;"></progress>
+    <p id="statusMessage" style="display:none; color:#0066cc;"></p>
+  </div>
+
+  <div class="video-result" id="videoResult"></div>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const audioInput = document.getElementById('audioInput');
+    const createBtn = document.getElementById('createBtn');
+    const baixarTodosBtn = document.getElementById('baixarTodosBtn');
+    const imagePreview = document.getElementById('imagePreview');
+    const audioPreview = document.getElementById('audioPreview');
+    const videoResult = document.getElementById('videoResult');
+    const statusMessage = document.getElementById('statusMessage');
+    const progress = document.getElementById('progress');
+
+    let selectedImages = [];
+    let selectedAudio = null;
+    let audioContext = null;
+    let videoBlobs = []; // Array para armazenar os vídeos gerados
+
+    imageInput.addEventListener('change', (event) => {
+      selectedImages = Array.from(event.target.files);
+      imagePreview.innerHTML = '';
+      selectedImages.forEach(file => {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'preview-item';
+        imagePreview.appendChild(img);
+      });
+      updateCreateButton();
+    });
+
+    audioInput.addEventListener('change', (event) => {
+      selectedAudio = event.target.files[0];
+      if (!selectedAudio) return;
+      audioPreview.innerHTML = '';
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = URL.createObjectURL(selectedAudio);
+      audioPreview.appendChild(audio);
+      updateCreateButton();
+    });
+
+    function updateCreateButton() {
+      createBtn.disabled = !(selectedImages.length && selectedAudio);
+    }
+
+    createBtn.addEventListener('click', async () => {
+      videoResult.innerHTML = '';
+      videoBlobs = []; // Limpa vídeos anteriores
+      progress.style.display = 'block';
+      progress.value = 0;
+      createBtn.disabled = true;
+      baixarTodosBtn.disabled = true;
+      statusMessage.textContent = 'Processando...';
+      statusMessage.style.display = 'block';
+
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      for (let i = 0; i < selectedImages.length; i++) {
+        statusMessage.textContent = `Processando imagem ${i + 1} de ${selectedImages.length}...`;
+        const videoBlob = await createShortVideo(selectedImages[i], selectedAudio);
+        videoBlobs.push(videoBlob); // Armazena o blob do vídeo
+        displayVideoResult(videoBlob, i + 1);
+        progress.value = ((i + 1) / selectedImages.length) * 100;
+      }
+
+      statusMessage.textContent = 'Todos os Shorts foram criados!';
+      setTimeout(() => statusMessage.style.display = 'none', 3000);
+      baixarTodosBtn.disabled = false;
+      createBtn.disabled = false;
+    });
+
+    async function createShortVideo(imageFile, audioFile) {
+      return new Promise(async (resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 540;
+        canvas.height = 960;
+        const ctx = canvas.getContext('2d');
+
+        const img = await loadImage(imageFile);
+        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const w = img.width * scale;
+        const h = img.height * scale;
+        const x = (canvas.width - w) / 2;
+        const y = (canvas.height - h) / 2;
+
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, x, y, w, h);
+
+        const stream = canvas.captureStream();
+        const audioBuffer = await audioContext.decodeAudioData(await audioFile.arrayBuffer());
+        const audioSource = audioContext.createBufferSource();
+        audioSource.buffer = audioBuffer;
+        audioSource.loop = audioBuffer.duration < 30;
+
+        const dest = audioContext.createMediaStreamDestination();
+        audioSource.connect(dest);
+        const audioTrack = dest.stream.getAudioTracks()[0];
+        if (audioTrack) stream.addTrack(audioTrack);
+
+        const recorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+        const chunks = [];
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => resolve(new Blob(chunks, { type: 'video/webm' }));
+
+        audioSource.start();
+        recorder.start();
+        setTimeout(() => {
+          recorder.stop();
+          audioSource.stop();
+        }, 30000);
+      });
+    }
+
+    function loadImage(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    function displayVideoResult(videoBlob, index) {
+      const url = URL.createObjectURL(videoBlob);
+      const card = document.createElement('div');
+      card.className = 'video-card';
+
+      const title = document.createElement('h3');
+      title.textContent = `Shorts #${index}`;
+
+      const video = document.createElement('video');
+      video.className = 'video-player';
+      video.controls = true;
+      video.src = url;
+
+      const download = document.createElement('a');
+      download.href = url;
+      download.download = `shorts-${index}.webm`;
+      download.className = 'download-btn';
+      download.textContent = 'Download';
+
+      card.appendChild(title);
+      card.appendChild(video);
+      card.appendChild(download);
+      videoResult.appendChild(card);
+    }
+
+    // Função modificada para baixar todos os vídeos
+    baixarTodosBtn.addEventListener('click', async () => {
+      for (let i = 0; i < videoBlobs.length; i++) {
+        const blob = videoBlobs[i];
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `shorts-${i + 1}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        await new Promise(resolve => setTimeout(resolve, 500)); // Intervalo de segurança
+      }
+    });
+  </script>
+</body>
+</html>

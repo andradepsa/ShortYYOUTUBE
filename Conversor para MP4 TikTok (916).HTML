@@ -1,0 +1,881 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor para MP4 TikTok (9:16) - Online</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #FF0050;
+        }
+        
+        .card h2 {
+            color: #FF0050;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        
+        button {
+            background-color: #FF0050;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #e00046;
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            position: relative;
+            height: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: #25F4EE;
+            width: 0;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .info-box {
+            background-color: #fef0f5;
+            border-left: 4px solid #FF0050;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .log {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .download-container {
+            margin-top: 20px;
+        }
+        
+        .download-btn {
+            background-color: #25F4EE;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .download-btn:hover {
+            background-color: #1dd1cc;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .success {
+            color: #27ae60;
+        }
+        
+        .media-container {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            display: none;
+        }
+        
+        .preview-container {
+            position: relative;
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            height: 640px;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            flex: 1;
+            padding: 10px;
+        }
+        
+        .video-settings {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        
+        .video-settings h3 {
+            margin-bottom: 10px;
+        }
+        
+        .settings-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        
+        .settings-row label {
+            min-width: 120px;
+            margin-bottom: 0;
+        }
+        
+        .settings-row input, .settings-row select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .file-list {
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .file-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .file-name {
+            font-weight: bold;
+        }
+        
+        .file-size {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .file-status {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .status-pending {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .status-processing {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .status-completed {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .status-error {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .batch-progress {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .preview-container {
+                height: 480px;
+            }
+            
+            .settings-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .settings-row label {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conversor para MP4 TikTok (9:16)</h1>
+        
+        <div class="card">
+            <h2>Escolha seus arquivos de vídeo</h2>
+            <div class="form-group">
+                <label for="inputFile">Selecione os arquivos para converter (MP4, WebM, MOV, etc.):</label>
+                <input type="file" id="inputFile" accept="video/*" multiple />
+                <div id="fileError" class="error"></div>
+            </div>
+            
+            <div id="fileList" class="file-list" style="display: none;">
+                <h3>Arquivos selecionados:</h3>
+                <div id="fileItems"></div>
+                <div class="batch-progress" id="batchProgress"></div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h3>Informações</h3>
+            <p>Este conversor transforma seus vídeos em MP4 com proporção 9:16, ideal para o TikTok e outras redes sociais.</p>
+            <p><strong>Formatos suportados:</strong> MP4, WebM, MOV, AVI e outros formatos de vídeo.</p>
+            <p>Todo o processamento é feito no seu navegador - seus vídeos não são enviados para servidores externos.</p>
+            <p><strong>Novo:</strong> Agora suporta conversão de múltiplos vídeos de uma vez!</p>
+        </div>
+        
+        <div class="video-settings" id="videoSettings">
+            <h3>Configurações para o TikTok</h3>
+            
+            <div class="settings-row">
+                <label for="aspectRatio">Proporção:</label>
+                <select id="aspectRatio">
+                    <option value="9:16" selected>9:16 (Vertical - TikTok)</option>
+                    <option value="16:9">16:9 (Horizontal)</option>
+                    <option value="1:1">1:1 (Quadrado - Instagram)</option>
+                    <option value="4:5">4:5 (Retrato - Instagram)</option>
+                    <option value="original">Original</option>
+                </select>
+            </div>
+            
+            <div class="settings-row">
+                <label for="quality">Qualidade:</label>
+                <select id="quality">
+                    <option value="high">Alta (1080p)</option>
+                    <option value="medium" selected>Média (720p)</option>
+                    <option value="low">Baixa (480p)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="media-container" id="mediaContainer">
+            <div class="preview-container">
+                <video id="previewVideo" controls></video>
+            </div>
+        </div>
+        
+        <button id="convertBtn" disabled>Converter Todos para MP4 (9:16)</button>
+        
+        <div class="progress-container" style="display: none;" id="progressContainer">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+        
+        <div class="log" id="logArea"></div>
+        
+        <div class="download-container" id="downloadContainer" style="display: none;">
+            <h3>Conversões concluídas:</h3>
+            <div id="downloadItems"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos DOM
+            const inputFile = document.getElementById('inputFile');
+            const convertBtn = document.getElementById('convertBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const logArea = document.getElementById('logArea');
+            const downloadContainer = document.getElementById('downloadContainer');
+            const fileError = document.getElementById('fileError');
+            const mediaContainer = document.getElementById('mediaContainer');
+            const previewVideo = document.getElementById('previewVideo');
+            const videoSettings = document.getElementById('videoSettings');
+            const aspectRatioSelect = document.getElementById('aspectRatio');
+            const qualitySelect = document.getElementById('quality');
+            const fileList = document.getElementById('fileList');
+            const fileItems = document.getElementById('fileItems');
+            const batchProgress = document.getElementById('batchProgress');
+            const downloadItems = document.getElementById('downloadItems');
+            
+            // Verificar se o navegador suporta as APIs necessárias
+            if (!window.File || !window.FileReader || !window.Blob || !window.MediaRecorder) {
+                log('Erro: Seu navegador não suporta as APIs necessárias para este conversor.');
+                return;
+            }
+            
+            let selectedFiles = [];
+            let videoUrl = null;
+            let currentProcessingIndex = 0;
+            let convertedVideos = [];
+            
+            // Adicionar listener ao input de arquivo
+            inputFile.addEventListener('change', async (event) => {
+                const files = Array.from(event.target.files);
+                if (files.length > 0) {
+                    selectedFiles = [];
+                    fileItems.innerHTML = '';
+                    
+                    let validFiles = 0;
+                    
+                    files.forEach((file, index) => {
+                        if (file.type.startsWith('video/') || /\.(mp4|webm|mov|avi|mkv)$/i.test(file.name)) {
+                            selectedFiles.push(file);
+                            validFiles++;
+                            
+                            // Adicionar à lista de arquivos
+                            const fileItem = document.createElement('div');
+                            fileItem.className = 'file-item';
+                            fileItem.id = `file-${index}`;
+                            fileItem.innerHTML = `
+                                <div class="file-info">
+                                    <span class="file-name">${file.name}</span>
+                                    <span class="file-size">${formatFileSize(file.size)}</span>
+                                </div>
+                                <span class="file-status status-pending">Pendente</span>
+                            `;
+                            fileItems.appendChild(fileItem);
+                        }
+                    });
+                    
+                    if (validFiles > 0) {
+                        fileError.textContent = '';
+                        fileList.style.display = 'block';
+                        
+                        // Criar preview do primeiro vídeo
+                        if (videoUrl) {
+                            URL.revokeObjectURL(videoUrl);
+                        }
+                        
+                        videoUrl = URL.createObjectURL(selectedFiles[0]);
+                        previewVideo.src = videoUrl;
+                        mediaContainer.style.display = 'flex';
+                        videoSettings.style.display = 'block';
+                        convertBtn.disabled = false;
+                        
+                        // Ocultar download se novos arquivos forem selecionados
+                        downloadContainer.style.display = 'none';
+                        downloadItems.innerHTML = '';
+                        
+                        log(`Selecionados ${validFiles} arquivo(s) válido(s) para conversão.`);
+                        
+                        // Atualizar progresso do lote
+                        updateBatchProgress();
+                    } else {
+                        fileError.textContent = 'Por favor, selecione arquivos de vídeo válidos.';
+                        selectedFiles = [];
+                        convertBtn.disabled = true;
+                        fileList.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Obter informações do vídeo
+            async function getVideoInfo(url) {
+                return new Promise((resolve) => {
+                    const video = document.createElement('video');
+                    
+                    video.onloadedmetadata = () => {
+                        const width = video.videoWidth;
+                        const height = video.videoHeight;
+                        const duration = video.duration;
+                        
+                        const aspectRatio = (width / height).toFixed(2);
+                        
+                        log(`Dimensões originais: ${width}x${height} (${aspectRatio}:1)`);
+                        log(`Duração: ${formatTime(duration)}`);
+                        
+                        resolve({width, height, duration});
+                    };
+                    
+                    video.onerror = () => {
+                        log('Erro ao carregar informações do vídeo');
+                        resolve(null);
+                    };
+                    
+                    video.src = url;
+                });
+            }
+            
+            // Converter arquivos quando o botão for clicado
+            convertBtn.addEventListener('click', async () => {
+                if (selectedFiles.length === 0) return;
+                
+                try {
+                    convertBtn.disabled = true;
+                    progressContainer.style.display = 'block';
+                    downloadContainer.style.display = 'none';
+                    updateProgress(0);
+                    
+                    log(`Iniciando processamento de ${selectedFiles.length} vídeo(s)...`);
+                    
+                    // Obter configurações
+                    const aspectRatio = aspectRatioSelect.value;
+                    const quality = qualitySelect.value;
+                    
+                    log(`Configurações: Proporção=${aspectRatio}, Qualidade=${quality}`);
+                    
+                    // Processar cada vídeo em sequência
+                    currentProcessingIndex = 0;
+                    convertedVideos = [];
+                    
+                    for (let i = 0; i < selectedFiles.length; i++) {
+                        await processVideo(selectedFiles[i], i, aspectRatio, quality);
+                        currentProcessingIndex++;
+                        updateBatchProgress();
+                    }
+                    
+                    log('Todos os vídeos foram processados com sucesso!');
+                    
+                } catch (error) {
+                    log(`Erro durante o processamento: ${error.message}`);
+                    updateProgress(0);
+                } finally {
+                    convertBtn.disabled = false;
+                }
+            });
+            
+            // Função para processar o vídeo
+            async function processVideo(file, index, aspectRatio, quality) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        // Atualizar status do arquivo
+                        updateFileStatus(index, 'processing', 'Processando...');
+                        
+                        log(`Iniciando processamento do arquivo ${index + 1}/${selectedFiles.length}: ${file.name}`);
+                        
+                        // Criar elementos de vídeo e canvas
+                        const video = document.createElement('video');
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Definir qualidade baseada na seleção
+                        const qualitySettings = {
+                            'high': { 
+                                videoBitsPerSecond: 8000000, 
+                                audioBitsPerSecond: 128000,
+                                width: 1080,
+                                height: 1920
+                            },
+                            'medium': { 
+                                videoBitsPerSecond: 5000000, 
+                                audioBitsPerSecond: 96000,
+                                width: 720,
+                                height: 1280
+                            },
+                            'low': { 
+                                videoBitsPerSecond: 2500000, 
+                                audioBitsPerSecond: 64000,
+                                width: 480,
+                                height: 854
+                            }
+                        };
+                        
+                        const settings = qualitySettings[quality];
+                        
+                        await new Promise((innerResolve, innerReject) => {
+                            video.onloadedmetadata = function() {
+                                try {
+                                    // Obter dimensões originais
+                                    const originalWidth = video.videoWidth;
+                                    const originalHeight = video.videoHeight;
+                                    
+                                    log(`Dimensões originais: ${originalWidth}x${originalHeight}`);
+                                    
+                                    // Calcular novas dimensões baseadas na proporção selecionada
+                                    let newWidth, newHeight;
+                                    
+                                    if (aspectRatio === 'original') {
+                                        newWidth = originalWidth;
+                                        newHeight = originalHeight;
+                                    } else if (aspectRatio === '9:16') {
+                                        // Vertical 9:16 (TikTok)
+                                        newHeight = settings.height;
+                                        newWidth = settings.width;
+                                    } else if (aspectRatio === '16:9') {
+                                        // Horizontal 16:9
+                                        newWidth = settings.width;
+                                        newHeight = Math.round(newWidth / (16/9));
+                                    } else if (aspectRatio === '1:1') {
+                                        // Quadrado 1:1
+                                        newWidth = newHeight = Math.min(settings.width, settings.height);
+                                    } else if (aspectRatio === '4:5') {
+                                        // Instagram 4:5
+                                        newHeight = settings.height;
+                                        newWidth = Math.round(newHeight * (4/5));
+                                    }
+                                    
+                                    // Configurar canvas com as novas dimensões
+                                    canvas.width = newWidth;
+                                    canvas.height = newHeight;
+                                    
+                                    log(`Novas dimensões: ${newWidth}x${newHeight}`);
+                                    
+                                    // Configurar stream do canvas
+                                    const stream = canvas.captureStream(30); // 30 FPS
+                                    
+                                    // Tentar adicionar áudio ao stream se possível
+                                    if (video.captureStream) {
+                                        try {
+                                            const audioTracks = video.captureStream().getAudioTracks();
+                                            if (audioTracks.length > 0) {
+                                                audioTracks.forEach(track => stream.addTrack(track));
+                                                log('Áudio adicionado ao stream');
+                                            }
+                                        } catch (e) {
+                                            log('Não foi possível adicionar áudio: ' + e.message);
+                                        }
+                                    }
+                                    
+                                    // Configurar MediaRecorder para MP4
+                                    let options;
+                                    let mimeType = 'video/mp4';
+                                    
+                                    // Verificar suporte de codecs
+                                    if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264')) {
+                                        mimeType = 'video/mp4;codecs=h264';
+                                        log('Codec H.264 suportado - melhor qualidade');
+                                    } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                                        mimeType = 'video/mp4';
+                                        log('MP4 genérico suportado');
+                                    } else {
+                                        log('MP4 não suportado, usando WebM como fallback');
+                                        mimeType = 'video/webm';
+                                    }
+                                    
+                                    options = {
+                                        mimeType: mimeType,
+                                        videoBitsPerSecond: settings.videoBitsPerSecond,
+                                        audioBitsPerSecond: settings.audioBitsPerSecond
+                                    };
+                                    
+                                    // Criar MediaRecorder
+                                    let recorder;
+                                    try {
+                                        recorder = new MediaRecorder(stream, options);
+                                    } catch (e) {
+                                        log('Erro ao criar MediaRecorder, tentando sem opções específicas');
+                                        recorder = new MediaRecorder(stream);
+                                    }
+                                    
+                                    // Array para armazenar os chunks do vídeo
+                                    const chunks = [];
+                                    
+                                    // Evento para coletar os chunks
+                                    recorder.ondataavailable = function(e) {
+                                        if (e.data.size > 0) {
+                                            chunks.push(e.data);
+                                        }
+                                    };
+                                    
+                                    // Evento ao finalizar a gravação
+                                    recorder.onstop = function() {
+                                        log(`Processamento completo para ${file.name}, preparando download...`);
+                                        
+                                        // Criar blob a partir dos chunks
+                                        const recordedBlob = new Blob(chunks, { 
+                                            type: recorder.mimeType || 'video/mp4' 
+                                        });
+                                        
+                                        // Criar URL para o novo blob
+                                        const outputUrl = URL.createObjectURL(recordedBlob);
+                                        
+                                        // Definir nome do arquivo
+                                        const outputFileName = file.name.replace(/\.[^/.]+$/, '') + '_tiktok.mp4';
+                                        
+                                        // Adicionar à lista de vídeos convertidos
+                                        convertedVideos.push({
+                                            url: outputUrl,
+                                            name: outputFileName,
+                                            index: index
+                                        });
+                                        
+                                        // Atualizar status do arquivo
+                                        updateFileStatus(index, 'completed', 'Concluído');
+                                        
+                                        // Mostrar botão de download
+                                        showDownloadButton(index, outputUrl, outputFileName);
+                                        
+                                        // Calcular progresso geral
+                                        const overallProgress = ((index + 1) / selectedFiles.length) * 100;
+                                        updateProgress(overallProgress);
+                                        
+                                        innerResolve();
+                                    };
+                                    
+                                    // Iniciar gravação
+                                    recorder.start(100); // Coletar chunks a cada 100ms
+                                    
+                                    // Reproduzir vídeo e desenhar no canvas
+                                    video.onplay = function() {
+                                        log(`Convertendo ${file.name}...`);
+                                        
+                                        // Função para desenhar cada frame
+                                        function drawFrame() {
+                                            // Calcular posição centralizada para corte
+                                            let sx = 0, sy = 0;
+                                            let sWidth = originalWidth, sHeight = originalHeight;
+                                            
+                                            if (aspectRatio !== 'original') {
+                                                const originalRatio = originalWidth / originalHeight;
+                                                const targetRatio = newWidth / newHeight;
+                                                
+                                                if (originalRatio > targetRatio) {
+                                                    // Cortar laterais
+                                                    sWidth = originalHeight * targetRatio;
+                                                    sx = (originalWidth - sWidth) / 2;
+                                                } else {
+                                                    // Cortar topo e base
+                                                    sHeight = originalWidth / targetRatio;
+                                                    sy = (originalHeight - sHeight) / 2;
+                                                }
+                                            }
+                                            
+                                            // Limpar canvas
+                                            ctx.fillStyle = '#000';
+                                            ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                            
+                                            // Desenhar frame atual
+                                            ctx.drawImage(
+                                                video,
+                                                sx, sy, sWidth, sHeight,
+                                                0, 0, newWidth, newHeight
+                                            );
+                                            
+                                            // Calcular progresso individual
+                                            const fileProgress = (video.currentTime / video.duration) * 100;
+                                            const overallProgress = (index / selectedFiles.length) * 100 + (fileProgress / selectedFiles.length);
+                                            updateProgress(overallProgress);
+                                            
+                                            // Continuar loop de animação se o vídeo estiver em reprodução
+                                            if (!video.paused && !video.ended) {
+                                                requestAnimationFrame(drawFrame);
+                                            }
+                                        }
+                                        
+                                        // Iniciar loop de desenho
+                                        drawFrame();
+                                    };
+                                    
+                                    // Quando o vídeo terminar, parar a gravação
+                                    video.onended = function() {
+                                        log(`Finalizando processamento de ${file.name}...`);
+                                        setTimeout(() => {
+                                            recorder.stop();
+                                        }, 1000);
+                                    };
+                                    
+                                    // Iniciar reprodução do vídeo
+                                    video.play();
+                                    
+                                } catch (e) {
+                                    updateFileStatus(index, 'error', 'Erro');
+                                    innerReject(e);
+                                }
+                            };
+                            
+                            video.onerror = function() {
+                                updateFileStatus(index, 'error', 'Erro');
+                                innerReject(new Error('Erro ao carregar o vídeo'));
+                            };
+                            
+                            // Carregar o vídeo original
+                            video.src = URL.createObjectURL(file);
+                            video.muted = true;
+                        });
+                        
+                        resolve();
+                        
+                    } catch (error) {
+                        updateFileStatus(index, 'error', 'Erro');
+                        log(`Erro ao processar ${file.name}: ${error.message}`);
+                        reject(error);
+                    }
+                });
+            }
+            
+            // Função para atualizar o status de um arquivo na lista
+            function updateFileStatus(index, status, text) {
+                const fileElement = document.getElementById(`file-${index}`);
+                if (fileElement) {
+                    const statusElement = fileElement.querySelector('.file-status');
+                    statusElement.className = 'file-status status-' + status;
+                    statusElement.textContent = text || status.charAt(0).toUpperCase() + status.slice(1);
+                }
+            }
+            
+            // Função para mostrar botão de download
+            function showDownloadButton(index, url, fileName) {
+                downloadContainer.style.display = 'block';
+                
+                const downloadItem = document.createElement('div');
+                downloadItem.className = 'file-item';
+                downloadItem.innerHTML = `
+                    <div class="file-info">
+                        <span class="file-name">${fileName}</span>
+                    </div>
+                    <button class="download-btn" onclick="downloadFile('${url}', '${fileName}')">Baixar</button>
+                `;
+                downloadItems.appendChild(downloadItem);
+            }
+            
+            // Função para atualizar o progresso do lote
+            function updateBatchProgress() {
+                const completed = currentProcessingIndex;
+                const total = selectedFiles.length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                
+                batchProgress.textContent = `Progresso: ${completed}/${total} (${percentage}%)`;
+                
+                if (completed === total) {
+                    batchProgress.innerHTML += ' <span class="success">- Todos os vídeos processados!</span>';
+                }
+            }
+            
+            // Função para atualizar a barra de progresso
+            function updateProgress(percent) {
+                progressBar.style.width = `${percent}%`;
+                progressBar.textContent = `${Math.round(percent)}%`;
+            }
+            
+            // Função para registrar mensagens no log
+            function log(message) {
+                const now = new Date();
+                const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                logArea.innerHTML += `[${timestamp}] ${message}<br>`;
+                logArea.scrollTop = logArea.scrollHeight;
+            }
+            
+            // Função para formatar o tamanho do arquivo
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' bytes';
+                else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+                else if (bytes < 1073741824) return (bytes / 1048576).toFixed(2) + ' MB';
+                else return (bytes / 1073741824).toFixed(2) + ' GB';
+            }
+            
+            // Função para formatar o tempo em HH:MM:SS
+            function formatTime(seconds) {
+                const h = Math.floor(seconds / 3600);
+                const m = Math.floor((seconds % 3600) / 60);
+                const s = Math.floor(seconds % 60);
+                return `${h > 0 ? h + ':' : ''}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+            
+            // Iniciar
+            log('Conversor para MP4 TikTok (9:16) - Online');
+            log('Pronto para processar. Selecione os arquivos de vídeo para começar.');
+        });
+        
+        // Função global para download (necessária para funcionar com os event listeners dinâmicos)
+        function downloadFile(url, fileName) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>

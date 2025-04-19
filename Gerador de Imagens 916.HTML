@@ -1,0 +1,148 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de Imagens 9:16</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin: 10px 0;
+        }
+        .preview-container {
+            margin: 20px 0;
+        }
+    </style>
+    <!-- Bibliotecas para gerar ZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Gerador de Imagens 9:16</h2>
+        
+        <textarea id="inputText" placeholder="Digite uma frase por linha...&#10;Exemplo:&#10;Primeira frase&#10;Segunda frase&#10;Terceira frase"></textarea>
+        
+        <div>
+            <label>Tamanho da Fonte: </label>
+            <input type="number" id="fontSize" value="80" min="20" max="200">
+            
+            <label>Cor do Texto: </label>
+            <input type="color" id="textColor" value="#ffffff">
+            
+            <label>Cor de Fundo: </label>
+            <input type="color" id="bgColor" value="#000000">
+        </div>
+
+        <button onclick="generateAllImages()">Gerar Todas as Imagens</button>
+        <button onclick="downloadAll()" id="downloadBtn" disabled>Download ZIP</button>
+
+        <div id="preview" class="preview-container"></div>
+    </div>
+
+    <script>
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let imagesData = [];
+        
+        // Configurações fixas para 9:16 (1080x1920 pixels)
+        const canvasWidth = 1080;
+        const canvasHeight = 1920;
+
+        function createImage(text, fontSize, textColor, bgColor) {
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            // Preencher fundo
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+            // Configurar texto
+            ctx.fillStyle = textColor;
+            ctx.font = `${fontSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Quebrar texto em múltiplas linhas
+            const maxWidth = canvasWidth - 100;
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                const width = ctx.measureText(currentLine + ' ' + words[i]).width;
+                if (width < maxWidth) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+
+            // Calcular posição vertical
+            const totalHeight = lines.length * fontSize;
+            const startY = (canvasHeight - totalHeight) / 2;
+
+            // Desenhar linhas
+            lines.forEach((line, index) => {
+                const y = startY + (index * fontSize);
+                ctx.fillText(line, canvasWidth/2, y);
+            });
+
+            return canvas.toDataURL('image/png');
+        }
+
+        async function generateAllImages() {
+            const input = document.getElementById('inputText').value;
+            const fontSize = parseInt(document.getElementById('fontSize').value);
+            const textColor = document.getElementById('textColor').value;
+            const bgColor = document.getElementById('bgColor').value;
+
+            imagesData = [];
+            const lines = input.split('\n').filter(line => line.trim() !== '');
+            
+            lines.forEach((line, index) => {
+                const imgData = createImage(line, fontSize, textColor, bgColor);
+                imagesData.push({
+                    data: imgData,
+                    name: `imagem_${index + 1}.png`
+                });
+            });
+
+            document.getElementById('downloadBtn').disabled = false;
+            alert(`${lines.length} imagens geradas com sucesso! Clique em Download ZIP.`);
+        }
+
+        async function downloadAll() {
+            const zip = new JSZip();
+            
+            imagesData.forEach((img, index) => {
+                const base64Data = img.data.split(',')[1];
+                zip.file(img.name, base64Data, {base64: true});
+            });
+
+            const content = await zip.generateAsync({type: "blob"});
+            saveAs(content, "imagens.zip");
+        }
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<head>
+    
